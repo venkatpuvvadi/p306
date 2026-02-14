@@ -46,15 +46,24 @@ const runInit = async () => {
         const schemaPath = path.resolve(__dirname, 'database/schema.mssql.sql');
         const schema = fs.readFileSync(schemaPath, 'utf8');
 
-        // Split by 'GO' if present (MSSQL standard batch separator), though standard driver might just take the whole thing if it's simple.
-        // Also replace "IF NOT EXISTS..." checks if they are causing issues, but they shouldn't.
+        // Split by 'GO' (case insensitive, on its own line)
+        const batches = schema.split(/^\s*GO\s*$/im);
 
-        try {
-            await appPool.request().query(schema);
-            console.log("Schema script executed.");
-        } catch (schemaErr) {
-            console.error("Error executing schema script:", schemaErr);
+        for (const batch of batches) {
+            const sql = batch.trim();
+            if (sql) {
+                try {
+                    console.log("Executing batch...");
+                    await appPool.request().query(sql);
+                } catch (batchErr) {
+                    console.error("Error executing batch:", batchErr.message);
+                    console.error("SQL:", sql);
+                    // Decide if we should throw or continue. For now, let's continue but verify at end.
+                }
+            }
         }
+
+        console.log("Schema script execution completed.");
 
         // 5. Verification
         console.log("Verifying tables...");

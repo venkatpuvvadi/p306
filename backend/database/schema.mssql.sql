@@ -15,6 +15,7 @@ BEGIN
         updated_at DATETIME DEFAULT GETDATE()
     );
 END
+GO
 
 -- Media Table
 IF NOT EXISTS (SELECT *
@@ -34,6 +35,7 @@ BEGIN
         FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE CASCADE
     );
 END
+GO
 
 -- Initial Admin User
 IF NOT EXISTS (SELECT *
@@ -45,3 +47,4 @@ BEGIN
     VALUES
         ('admin', '$2b$08$KILYg3zbEAhFoVwcBNzAwegPNBPCKgVCutGOlMD/X6tnSt3giNryK', 'admin', 1);
 END
+GO
