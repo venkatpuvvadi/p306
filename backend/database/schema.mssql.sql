@@ -46,5 +46,6 @@ BEGIN
         (username, password_hash, role, is_active)
     VALUES
         ('admin', '$2b$08$KILYg3zbEAhFoVwcBNzAwegPNBPCKgVCutGOlMD/X6tnSt3giNryK', 'admin', 1);
+        
 END
 GO
