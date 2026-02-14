@@ -7,7 +7,7 @@ import { AuthService } from './auth';
   providedIn: 'root'
 })
 export class MediaService {
-  private apiUrl = '/api/media';
+  private apiUrl = 'http://localhost:3000/api/media';
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
