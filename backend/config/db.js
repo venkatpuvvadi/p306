@@ -1,2 +1,2 @@
-const pool = require('./db.mssql');
+const pool = require('./db.sqlite');
 module.exports = pool;
