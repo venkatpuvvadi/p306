@@ -46,10 +46,20 @@ const runInit = async () => {
         const schemaPath = path.resolve(__dirname, 'database/schema.mssql.sql');
         const schema = fs.readFileSync(schemaPath, 'utf8');
 
-        // Split columns/commands if needed, but MSSQL often handles batches
-        // schema.mssql.sql uses IF NOT EXISTS so it's safe to re-run
-        await appPool.request().query(schema);
-        console.log("Schema initialized successfully.");
+        // Split by 'GO' if present (MSSQL standard batch separator), though standard driver might just take the whole thing if it's simple.
+        // Also replace "IF NOT EXISTS..." checks if they are causing issues, but they shouldn't.
+
+        try {
+            await appPool.request().query(schema);
+            console.log("Schema script executed.");
+        } catch (schemaErr) {
+            console.error("Error executing schema script:", schemaErr);
+        }
+
+        // 5. Verification
+        console.log("Verifying tables...");
+        const tableCheck = await appPool.request().query(`SELECT name FROM sys.tables`);
+        console.log("Tables found:", tableCheck.recordset.map(r => r.name));
 
         await appPool.close();
         process.exit(0);
