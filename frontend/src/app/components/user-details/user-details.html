@@ -1,0 +1,55 @@
+<div class="container mx-auto px-4 py-8" *ngIf="user">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+        <div class="px-4 py-5 sm:px-6 flex items-center">
+            <img [src]="user.profile_photo ? 'http://localhost:3000/' + user.profile_photo : 'assets/default-profile.png'"
+                class="h-16 w-16 rounded-full object-cover mr-4" onerror="this.src='https://via.placeholder.com/150'"
+                alt="Profile">
+            <div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900">{{ user.username }}</h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ user.role }}</p>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="text-xl font-bold mb-4">Uploaded Media</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div *ngFor="let media of mediaFiles"
+            class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow relative"
+            [ngClass]="{'opacity-60 bg-red-50 border-red-200': media.is_deleted}">
+
+            <div *ngIf="media.is_deleted"
+                class="absolute top-0 right-0 bg-red-600 text-white text-xs px-2 py-1 rounded-bl">
+                Deleted
+            </div>
+
+            <div class="aspect-w-16 aspect-h-9 bg-gray-200">
+                <img *ngIf="media.file_type.startsWith('image')" [src]="'http://localhost:3000/' + media.file_path"
+                    class="object-cover w-full h-48" alt="{{media.file_name}}">
+                <video *ngIf="media.file_type.startsWith('video')" [src]="'http://localhost:3000/' + media.file_path"
+                    controls class="w-full h-48 bg-black"></video>
+                <div *ngIf="!media.file_type.startsWith('image') && !media.file_type.startsWith('video')"
+                    class="flex items-center justify-center h-48 bg-gray-100 text-gray-500">
+                    {{ media.file_type }}
+                </div>
+            </div>
+            <div class="p-4">
+                <p class="text-sm font-medium text-gray-900 truncate" title="{{media.file_name}}">{{ media.file_name }}
+                </p>
+                <p class="text-xs text-gray-500">{{ media.uploaded_at | date }}</p>
+                <button *ngIf="!media.is_deleted" (click)="deleteMedia(media.id)"
+                    class="mt-2 w-full inline-flex justify-center py-1 px-2 border border-transparent shadow-sm text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none">
+                    Delete
+                </button>
+                <button *ngIf="media.is_deleted" (click)="deleteMedia(media.id)"
+                    class="mt-2 w-full inline-flex justify-center py-1 px-2 border border-transparent shadow-sm text-xs font-medium rounded text-white bg-red-800 hover:bg-red-900 focus:outline-none"
+                    title="Permanently Delete">
+                    Hard Delete
+                </button>
+            </div>
+        </div>
+        <div *ngIf="mediaFiles.length === 0" class="col-span-full text-center text-gray-500 py-8">
+            This user hasn't uploaded any media.
+        </div>
+    </div>
+</div>

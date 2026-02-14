@@ -1,0 +1,46 @@
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">My Dashboard</h1>
+        <button (click)="logout()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            Logout
+        </button>
+    </div>
+
+    <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold mb-4">Upload New Media</h2>
+        <app-media-upload (uploadSuccess)="onUploadSuccess()"></app-media-upload>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">My Uploads</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div *ngFor="let media of mediaFiles"
+                class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <div class="aspect-w-16 aspect-h-9 bg-gray-200">
+                    <!-- Simple logic to display different types -->
+                    <img *ngIf="media.file_type.startsWith('image')" [src]="'http://localhost:3000/' + media.file_path"
+                        class="object-cover w-full h-48" alt="{{media.file_name}}">
+                    <video *ngIf="media.file_type.startsWith('video')"
+                        [src]="'http://localhost:3000/' + media.file_path" controls
+                        class="w-full h-48 bg-black"></video>
+                    <div *ngIf="!media.file_type.startsWith('image') && !media.file_type.startsWith('video')"
+                        class="flex items-center justify-center h-48 bg-gray-100 text-gray-500">
+                        {{ media.file_type }}
+                    </div>
+                </div>
+                <div class="p-4">
+                    <p class="text-sm font-medium text-gray-900 truncate" title="{{media.file_name}}">{{ media.file_name
+                        }}</p>
+                    <p class="text-xs text-gray-500">{{ media.uploaded_at | date }}</p>
+                    <button (click)="deleteMedia(media.id)"
+                        class="mt-2 w-full inline-flex justify-center py-1 px-2 border border-transparent shadow-sm text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none">
+                        Delete
+                    </button>
+                </div>
+            </div>
+            <div *ngIf="mediaFiles.length === 0" class="col-span-full text-center text-gray-500 py-8">
+                No media uploaded yet.
+            </div>
+        </div>
+    </div>
+</div>
